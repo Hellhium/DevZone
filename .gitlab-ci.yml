@@ -1,0 +1,21 @@
+variables:
+  S3_final: "techdicowebapp"
+
+cache:
+  paths:
+    - build/
+
+build:
+  image: node:latest
+  script:
+    - npm install
+    - npm run build
+
+deploy:
+  image: python:latest
+  environment:
+    name: staging
+    url: https://techdicowebapp.s3.eu-central-1.amazonaws.com/index.html
+  script:
+    - pip install awscli
+    - aws s3 cp ./build s3://$S3_final/ --recursive --acl public-read --exclude ".*"
